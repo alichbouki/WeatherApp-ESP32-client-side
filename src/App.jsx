@@ -1,4 +1,4 @@
-import { AppBar, Button, CircularProgress, Grid, Paper, Slider, Stack, Toolbar, Typography } from '@mui/material';
+import { AppBar, Button, CircularProgress, Grid, Link, Paper, Slider, Stack, Toolbar, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useState } from 'react';
 import InvertColorsIcon from '@mui/icons-material/InvertColors';
@@ -6,6 +6,7 @@ import LightModeIcon from '@mui/icons-material/LightMode';
 import ThermostatIcon from '@mui/icons-material/Thermostat';
 import CloudIcon from '@mui/icons-material/Cloud';
 import { useEffect } from 'react';
+import Theme from './Theme';
 
 const App = () => {
   const [data, setData] = useState(null)
@@ -18,7 +19,7 @@ const App = () => {
   useEffect(() => {
     if (ws !== null) {
       const _data = redVal + "," + greenVal + "," + blueVal
-      console.log(_data);
+      // console.log(_data);
       if (ws.readyState === ws.OPEN) {
         ws.send(_data)
       }
@@ -37,7 +38,6 @@ const App = () => {
     createWS(_ws);
   }, [])
 
-
   const handleChangingMod = () => {
     setTempMode(!tempMode)
   }
@@ -54,95 +54,142 @@ const App = () => {
     setBlueVal(val);
   }
 
-
   if (data != null) {
     return (
-      <Box sx={{ flexGrow: 1 }} justifyContent="center">
-        <AppBar position="static">
+      <Theme>
+        <Box sx={{ flexGrow: 1 }} justifyContent="center">
           <Toolbar>
-            <Typography variant="h4" textAlign={"center"}>
-              ESP32 Weather Station
-            </Typography>
+            <Grid
+              container
+              sx={{ color: "text.primary", md: 12 }}
+              spacing={2}
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Grid item justifyContent={"start"} xs={8}>
+                <Paper sx={{
+                  mx: "auto",
+                  mt: 5,
+                  p: 2,
+                  bgcolor: "primary.main"
+                }}>
+                  <Typography variant="h3" textAlign={"center"} color={"white"}>
+                    ESP32 Weather Station
+                  </Typography>
+                </Paper>
+              </Grid>
+              <Grid item justifyContent={"end"} xs={"auto"}>
+                <Paper sx={{
+                  mx: "auto",
+                  mt: 5,
+                }}>
+                  <img src={window.location.origin + "/assets/logo.jpg"} alt="Robotisames Logo" />
+                </Paper>
+              </Grid>
+            </Grid>
           </Toolbar>
-        </AppBar>
-        <Paper sx={{
-          width: 600,
-          mx: "auto",
-          mt: 5,
-          p: 2
-        }}>
+          <Paper sx={{
+            width: 600,
+            mx: "auto",
+            mt: 5,
+            p: 2,
+          }}>
+            <Grid
+              container
+              sx={{ color: "text.primary", md: 12 }}
+              spacing={2}
+              direction="column"
+              justifyContent="center"
+              alignItems="center"
+            >
+              <Grid container item xs={12}>
+                <Grid item xs={3}>
+                  <LightModeIcon />
+                </Grid>
+                <Grid item xs="auto">
+                  <Typography variant="h6" textAlign={"center"}>
+                    Ambiant Light: {data.light} lux
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid container item xs={12}>
+                <Grid container sx={{ color: "text.primary" }}>
+                  <Grid item xs={3}>
+                    <InvertColorsIcon />
+                  </Grid>
+                  <Grid item xs="auto">
+                    <Typography variant="h6" textAlign={"center"}>
+                      Humidity: {data.humd}%
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid container item xs={12}>
+                <Grid container sx={{ color: "text.primary" }}>
+                  <Grid item xs={3}>
+                    <ThermostatIcon />
+                  </Grid>
+                  <Grid item xs={6} alignContent={"left"}>
+                    <Typography variant="h6" textAlign={"left"}>
+                      Temperature: {tempMode ? data.temp.C + "C" : data.temp.F + "F"}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={3}>
+                    <Button variant={"contained"} onClick={handleChangingMod} color={"primary"}>
+                      switch to {tempMode ? "F" : "C"}
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid container item xs={12}>
+                <Grid container sx={{ color: "text.primary" }}>
+                  <Grid item xs={3}>
+                    <CloudIcon />
+                  </Grid>
+                  <Grid item xs="auto">
+                    <Typography variant="h6" textAlign={"center"}>
+                      {data.rain ? "It is not raining there" : "It is raining there"}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Paper>
+          <Paper sx={{
+            width: 1000,
+            mx: "auto",
+            mt: 5,
+            p: 2,
+          }}>
+            <Slider id={"red-level"} min={0} max={255} value={redVal} onChange={handleRedChanging} valueLabelDisplay="auto" color="error" />
+            <Slider id={"green-level"} min={0} max={255} value={greenVal} onChange={handleGreenChanging} valueLabelDisplay="auto" color="success" />
+            <Slider id={"blue-level"} min={0} max={255} value={blueVal} onChange={handleBlueChanging} valueLabelDisplay="auto" color="secondary" />
+          </Paper>
+
           <Grid
             container
-            sx={{ color: "text.primary", md: 12 }}
+            sx={{ color: "text.primary", my:2 }}
             spacing={2}
-            direction="column"
+            direction="row"
             justifyContent="center"
             alignItems="center"
           >
-            <Grid container item xs={12}>
-              <Grid item xs={3}>
-                <LightModeIcon />
-              </Grid>
-              <Grid item xs="auto">
-                <Typography variant="h6" textAlign={"center"}>
-                  Ambiant Light: {data.light} lux
+            <Grid item justifyContent={"start"} xs={8}>
+                <Typography variant="h5" textAlign={"Left"} color={"primary"}>
+                  Made By Ali Chbouki
                 </Typography>
-              </Grid>
             </Grid>
-            <Grid container item xs={12}>
-              <Grid container sx={{ color: "text.primary" }}>
-                <Grid item xs={3}>
-                  <InvertColorsIcon />
-                </Grid>
-                <Grid item xs="auto">
-                  <Typography variant="h6" textAlign={"center"}>
-                    Humidity: {data.humd}%
+            <Grid item justifyContent={"end"} xs={"auto"}>
+                <Link href="https://robotisames.com/" underline="none">
+                  <Typography variant="h5" textAlign={"center"} color={"primary"}>
+                    Powered by: Robotisames.com
                   </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid container item xs={12}>
-              <Grid container sx={{ color: "text.primary" }}>
-                <Grid item xs={3}>
-                  <ThermostatIcon />
-                </Grid>
-                <Grid item xs={6} alignContent={"left"}>
-                  <Typography variant="h6" textAlign={"left"}>
-                    Temperature: {tempMode ? data.temp.C + "C" : data.temp.F + "F"}
-                  </Typography>
-                </Grid>
-                <Grid item xs={3}>
-                  <Button variant={"contained"} onClick={handleChangingMod}>
-                    switch to {tempMode ? "F" : "C"}
-                  </Button>
-                </Grid>
-              </Grid>
-            </Grid>
-            <Grid container item xs={12}>
-              <Grid container sx={{ color: "text.primary" }}>
-                <Grid item xs={3}>
-                  <CloudIcon />
-                </Grid>
-                <Grid item xs="auto">
-                  <Typography variant="h6" textAlign={"center"}>
-                    {data.rain ? "It is not raining there" : "It is raining there"}
-                  </Typography>
-                </Grid>
-              </Grid>
+                </Link>
             </Grid>
           </Grid>
-        </Paper>
-        <Paper sx={{
-          width: 600,
-          mx: "auto",
-          mt: 5,
-          p: 2
-        }}>
-          <Slider id={"red-level"} min={0} max={255} value={redVal} onChange={handleRedChanging} valueLabelDisplay="auto" />
-          <Slider id={"green-level"} min={0} max={255} value={greenVal} onChange={handleGreenChanging} valueLabelDisplay="auto" />
-          <Slider id={"blue-level"} min={0} max={255} value={blueVal} onChange={handleBlueChanging} valueLabelDisplay="auto" />
-        </Paper>
-      </Box >
+        </Box >
+      </Theme>
     )
   } else {
     return (
